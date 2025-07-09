@@ -1,6 +1,6 @@
 # 🧠 SecondBrain
 
-SecondBrain is an AI-powered productivity assistant designed to capture, organize, and retrieve your thoughts, tasks, and knowledge effortlessly. Inspired by the concept of a second brain, this tool helps you stay organized, make decisions faster, and never lose a valuable idea again.
+SecondBrain is an AI-powered knowledge assistant that connects to your personal knowledge hub—including your Obsidian vault (hosted on MinIO) and Raindrop bookmarks—and allows you to query it using natural language. It turns your saved notes and bookmarks into a searchable, private, AI-powered second brain.
 
 ---
 
@@ -22,13 +22,15 @@ Clone the repository and install dependencies:
 ```bash
 git clone https://github.com/yourusername/SecondBrain.git
 cd SecondBrain
-npm install
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
 ```
 
-Start the application:
+Run the application:
 
 ```bash
-npm run dev
+streamlit run main.py
 ```
 
 ---
@@ -37,41 +39,34 @@ npm run dev
 
 ```
 .
-├── components/          # Reusable UI components
-├── pages/               # Application routes and logic
-├── lib/                 # Utilities and helper functions
-├── public/              # Static assets
-├── styles/              # Global styles and theming
-├── README.md            # You're here!
+├── main.py                 # Entry point for the app
+├── .env                    # Your Environment Variables
+├── requirement.txt         # Packages needs to run this project
+├── README.md               # You're here!
 ```
 
 ---
 
 ## 📚 Technologies Used
 
-- 🧠 GPT-4 / LLMs
-- ⚛️ React / Next.js
-- 🧪 TypeScript
-- 🗃️ SQLite / Local Storage
-- 🎨 Tailwind CSS
+- 🐍 Python 3.10+
+- 🤖 OpenAI GPT-4 / LLMs
+- 🪣 MinIO (S3-Compatible Object Storage)
+- 🔖 Raindrop.io API
+- 🧠 LangChain / LlamaIndex
+- 📄 Markdown + JSON parsers
 
 ---
 
 ## 💡 Usage Ideas
 
-- Track your ideas, notes, and research across projects
-- Maintain a knowledge base of your work and learnings
-- Use as a daily journal with auto-tagging and reflection
-- Plan your day with actionable task suggestions from your notes
+- Ask questions like: _“What were my notes on async Python?”_
+- Get AI summaries of related notes and saved bookmarks
+- Use it to reflect on journal entries or past research
+- Stay in full control of your Second Brain—privately
 
 ---
 
 ## 🛠️ Contribution
 
-Pull requests are welcome! If you’d like to contribute, fork the repo and open a PR with your changes.
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License. See `LICENSE` for details.
+We welcome contributions! Feel free to fork this repository and adapt it to suit your needs or personal workflow.
