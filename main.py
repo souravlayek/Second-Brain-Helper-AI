@@ -56,7 +56,7 @@ def get_index(force_resync=False):
     else:
         # MinIO
         reader = MinioReader(
-            minio_endpoint="minioapi.souravlayek.com",
+            minio_endpoint=os.getenv("MINIO_PATH"),
             minio_access_key=os.getenv("MINIO_ACCESS_KEY"),
             minio_secret_key=os.getenv("MINIO_SECRET_KEY"),
             minio_secure=True,
