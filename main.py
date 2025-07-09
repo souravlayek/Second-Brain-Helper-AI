@@ -9,6 +9,7 @@ from llama_index.core.query_engine import RetrieverQueryEngine
 from llama_index.core.retrievers import VectorIndexRetriever
 from llama_index.core.base.llms.types import ChatMessage
 from llama_index.readers.minio import MinioReader
+from llama_index.core import Document
 
 load_dotenv()
 
@@ -43,7 +44,8 @@ def fetch_raindrop_bookmarks(api_token, collection_id=None, max_items=100):
         excerpt = item.get("excerpt", "")
         link = item.get("link", "")
         content = f"{title}\n{excerpt}\n{link}"
-        docs.append({"text": content, "metadata": {"source": "raindrop", "id": item.get("_id")}})
+        doc = Document(text=content, metadata={"source": "raindrop", "id": item.get("_id")})
+        docs.append(doc)
     return docs
 
 @st.cache_resource(show_spinner=False)
@@ -59,7 +61,7 @@ def get_index(force_resync=False):
             minio_secret_key=os.getenv("MINIO_SECRET_KEY"),
             minio_secure=True,
             bucket="obsidiannotes",
-            prefix="Knowledge Hub/"
+            prefix="Knowlege Hub/"
         )
         docs = reader.load_data()
         # Raindrop.io
@@ -86,13 +88,26 @@ with col2:
 
 # Resync logic
 if 'index' not in st.session_state or resync:
-    st.session_state['index'] = get_index(force_resync=resync)
+    try:
+        st.session_state['index'] = get_index(force_resync=resync)
+    except Exception as e:
+        print(e)
+        st.error(f"Error during index loading or resync: {e}")
+        st.stop()
 index = st.session_state['index']
 
 # Query Engine
 retriever = VectorIndexRetriever(index=index)
 query_engine = RetrieverQueryEngine(retriever=retriever)
 query_engine.llm = OpenAI(model="gpt-4.1-nano-2025-04-14")
+
+# Set a system prompt for the session
+SYSTEM_PROMPT = "You are Braian an AI assistant that helps answer questions from the users notes and bookmarks Be concise helpful and reference sources when possible also share from where did you get that scan document metadata for that"
+if hasattr(query_engine, 'system_prompt'):
+    query_engine.system_prompt = SYSTEM_PROMPT
+elif hasattr(query_engine.llm, 'system_prompt'):
+    query_engine.llm.system_prompt = SYSTEM_PROMPT
+# If neither, will need to pass as context in the query (handled below if needed)
 
 # Streamlit UI
 query = st.text_input("Ask something from your notes...")
